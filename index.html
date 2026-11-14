@@ -26,7 +26,8 @@
   </style>
 </head>
 <body>
-  <div class="container">
+
+<div class="container">
   <h1>Gerador de QR Code</h1>
 
   <div class="tabs">
@@ -72,10 +73,12 @@
   <button class="btn-main" id="btnGerar" onclick="gerarQR()">Gerar QR Code</button>
   <div id="resultado"><canvas id="qr-canvas"></canvas></div>
   <button id="btnBaixar" class="btn-download" onclick="baixarQR()">Baixar PNG</button>
-  </div>
-  <script>
+</div>
+
+<script>
   let abaAtual = 'texto';
   const canvas = document.getElementById('qr-canvas');
+  let urlParaBaixar = '';
 
   function mudarAba(aba, botao) {
     abaAtual = aba;
@@ -113,7 +116,8 @@
       return `https://wa.me{num}?text=${msg}`;
     }
   }
-        function gerarQR() {
+
+  function gerarQR() {
     const conteudo = montarConteudo();
     if (!conteudo) {
       alert('Preencha os dados obrigatórios primeiro!');
@@ -129,7 +133,6 @@
     const corFundo = document.getElementById('corFundo').value;
     const corFundoHex = corFundo.replace('#', '');
 
-    // API do QuickChart (super rápida e liberada em todas as redes)
     const urlApi = `https://quickchart.io{encodeURIComponent(conteudo)}&size=${tamanho}&dark=${corFrente}&light=${corFundoHex}&ecLevel=H&margin=2`;
 
     const resultadoDiv = document.getElementById('resultado');
@@ -143,7 +146,6 @@
     img.onload = function() {
       const logoInput = document.getElementById('logoInput');
       if (logoInput.files && logoInput.files.length > 0) {
-        // Se tiver logo, desenha no canvas
         const tempImg = new Image();
         tempImg.crossOrigin = 'anonymous';
         tempImg.onload = function() {
@@ -171,7 +173,6 @@
         };
         tempImg.src = urlApi;
       } else {
-        // Sem logo: exibe a imagem direto sem bloqueio de segurança
         resultadoDiv.appendChild(img);
         finalizarExibicao(urlApi);
       }
@@ -185,8 +186,6 @@
 
     img.src = urlApi;
   }
-
-  let urlParaBaixar = '';
 
   function finalizarExibicao(url) {
     urlParaBaixar = url;
