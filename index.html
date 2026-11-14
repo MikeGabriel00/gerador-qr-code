@@ -4,116 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gerador de QR Code</title>
-  <script src="https://cloudflare.com"></script>
   <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: #f0f2f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 1rem;
-    }
-    .container {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 14px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      width: 100%;
-      max-width: 440px;
-    }
+    body { font-family: system-ui, -apple-system, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 1rem; }
+    .container { background: white; padding: 1.5rem; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); width: 100%; max-width: 440px; }
     h1 { font-size: 1.4rem; color: #1f2937; text-align: center; margin-top: 0; }
-    .tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 1rem;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 10px;
-      background: #e5e7eb;
-      color: #374151;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-    }
+    .tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
+    .tab-btn { flex: 1; padding: 10px; background: #e5e7eb; color: #374151; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
     .tab-btn.active { background: #2563eb; color: white; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      box-sizing: border-box;
-      font-size: 0.95rem;
-    }
-    .options-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
-      font-size: 0.85rem;
-      color: #4b5563;
-    }
-    .options-grid label {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+    input, select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-size: 0.95rem; }
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; font-size: 0.85rem; color: #4b5563; }
+    .options-grid label { display: flex; flex-direction: column; gap: 4px; }
     input[type="color"] { padding: 2px; height: 38px; cursor: pointer; }
-    .btn-clear {
-      background: #ef4444;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 4px 8px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      margin-top: -6px;
-      margin-bottom: 6px;
-      display: none;
-    }
-    .btn-main {
-      width: 100%;
-      padding: 12px;
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 5px;
-    }
-    .btn-download {
-      width: 100%;
-      padding: 12px;
-      background-color: #16a34a;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: none;
-      margin-top: 8px;
-    }
-    #resultado {
-      display: flex;
-      justify-content: center;
-      margin: 1.5rem 0;
-    }
-    canvas { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e5e7eb; }
+    .btn-clear { background: #ef4444; color: white; border: none; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer; margin-top: -6px; margin-bottom: 6px; display: none; }
+    .btn-main, .btn-download { width: 100%; padding: 12px; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 5px; }
+    .btn-main { background-color: #2563eb; }
+    .btn-download { background-color: #16a34a; display: none; margin-top: 8px; }
+    #resultado { display: flex; justify-content: center; margin: 1.5rem 0; }
+    canvas { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e5e7eb; display: none; }
   </style>
 </head>
 <body>
-
-<div class="container">
+  <div class="container">
   <h1>Gerador de QR Code</h1>
 
   <div class="tabs">
@@ -142,35 +55,27 @@
   </div>
 
   <div class="options-grid">
-    <label>Cor do Código:
-      <input type="color" id="corFrente" value="#000000">
-    </label>
-    <label>Cor do Fundo:
-      <input type="color" id="corFundo" value="#ffffff">
-    </label>
-    <label>Tamanho (Qualidade):
+    <label>Cor do Código: <input type="color" id="corFrente" value="#000000"></label>
+    <label>Cor do Fundo: <input type="color" id="corFundo" value="#ffffff"></label>
+    <label>Tamanho:
       <select id="tamanho">
         <option value="300">Normal (300px)</option>
         <option value="800">Alta (800px - Impressão)</option>
       </select>
     </label>
-    <label>Logo no centro (opcional):
+    <label>Logo no centro:
       <input type="file" id="logoInput" accept="image/*" onchange="verificarLogo()" style="padding: 6px; font-size: 0.8rem;">
       <button type="button" id="btnRemoverLogo" class="btn-clear" onclick="limparLogo()">Remover logo</button>
     </label>
   </div>
 
-  <button class="btn-main" onclick="gerarQR()">Gerar QR Code</button>
-  <div id="resultado">
-    <canvas id="qr-canvas"></canvas>
-  </div>
+  <button class="btn-main" id="btnGerar" onclick="gerarQR()">Gerar QR Code</button>
+  <div id="resultado"><canvas id="qr-canvas"></canvas></div>
   <button id="btnBaixar" class="btn-download" onclick="baixarQR()">Baixar PNG</button>
-</div>
-
-<script>
+  </div>
+  <script>
   let abaAtual = 'texto';
   const canvas = document.getElementById('qr-canvas');
-  canvas.style.display = 'none';
 
   function mudarAba(aba, botao) {
     abaAtual = aba;
@@ -208,79 +113,69 @@
       return `https://wa.me{num}?text=${msg}`;
     }
   }
+      function gerarQR() {
+    const conteudo = montarConteudo();
+    if (!conteudo) {
+      alert('Preencha os dados obrigatórios primeiro!');
+      return;
+    }
 
-  function gerarQR() {
-    try {
-      if (typeof qrcode === 'undefined') {
-        alert('Aguarde a página terminar de carregar ou verifique sua internet.');
-        return;
-      }
+    const btnGerar = document.getElementById('btnGerar');
+    btnGerar.textContent = 'Gerando...';
+    btnGerar.disabled = true;
 
-      const conteudo = montarConteudo();
-      if (!conteudo) {
-        alert('Preencha os dados obrigatórios primeiro!');
-        return;
-      }
+    const tamanho = parseInt(document.getElementById('tamanho').value);
+    const corFrente = document.getElementById('corFrente').value.replace('#', '');
+    const corFundo = document.getElementById('corFundo').value;
+    const corFundoHex = corFundo.replace('#', '');
 
-      const tamanho = parseInt(document.getElementById('tamanho').value);
-      const corFrente = document.getElementById('corFrente').value;
-      const corFundo = document.getElementById('corFundo').value;
+    const urlApi = `https://qrserver.com{tamanho}x${tamanho}&data=${encodeURIComponent(conteudo)}&color=${corFrente}&bgcolor=${corFundoHex}&ecc=H&margin=10`;
 
-      // Tipo 0 ajusta automaticamente o tamanho do QR Code para links longos
-      const qr = qrcode(0, 'H');
-      qr.addData(conteudo, 'Byte');
-      qr.make();
+    const qrImg = new Image();
+    qrImg.crossOrigin = 'Anonymous';
 
-      const count = qr.getModuleCount();
-      const margin = 4;
-      const totalModules = count + margin * 2;
-      const tileSize = tamanho / totalModules;
-
+    qrImg.onload = function() {
       canvas.width = tamanho;
       canvas.height = tamanho;
       const ctx = canvas.getContext('2d');
-
-      // Pinta o fundo
-      ctx.fillStyle = corFundo;
-      ctx.fillRect(0, 0, tamanho, tamanho);
-
-      // Desenha os quadrados do QR Code
-      ctx.fillStyle = corFrente;
-      for (let row = 0; row < count; row++) {
-        for (let col = 0; col < count; col++) {
-          if (qr.isDark(row, col)) {
-            ctx.fillRect(
-              Math.round((col + margin) * tileSize),
-              Math.round((row + margin) * tileSize),
-              Math.ceil(tileSize),
-              Math.ceil(tileSize)
-            );
-          }
-        }
-      }
-
-      canvas.style.display = 'block';
-      document.getElementById('btnBaixar').style.display = 'block';
+      ctx.drawImage(qrImg, 0, 0, tamanho, tamanho);
 
       const logoInput = document.getElementById('logoInput');
       if (logoInput.files && logoInput.files.length > 0) {
         const reader = new FileReader();
         reader.onload = function(e) {
-          const img = new Image();
-          img.onload = function() {
+          const logoImg = new Image();
+          logoImg.onload = function() {
             const logoSize = tamanho * 0.22;
             const pos = (tamanho - logoSize) / 2;
             ctx.fillStyle = corFundo;
             ctx.fillRect(pos - 6, pos - 6, logoSize + 12, logoSize + 12);
-            ctx.drawImage(img, pos, pos, logoSize, logoSize);
+            ctx.drawImage(logoImg, pos, pos, logoSize, logoSize);
+            finalizarExibicao();
           };
-          img.src = e.target.result;
+          logoImg.src = e.target.result;
         };
         reader.readAsDataURL(logoInput.files.item(0));
+      } else {
+        finalizarExibicao();
       }
-    } catch (erro) {
-      alert('Erro ao gerar: ' + erro.message);
-    }
+    };
+
+    qrImg.onerror = function() {
+      alert('Não foi possível gerar o QR Code. Verifique sua conexão com a internet.');
+      btnGerar.textContent = 'Gerar QR Code';
+      btnGerar.disabled = false;
+    };
+
+    qrImg.src = urlApi;
+  }
+
+  function finalizarExibicao() {
+    canvas.style.display = 'block';
+    document.getElementById('btnBaixar').style.display = 'block';
+    const btnGerar = document.getElementById('btnGerar');
+    btnGerar.textContent = 'Gerar QR Code';
+    btnGerar.disabled = false;
   }
 
   function baixarQR() {
