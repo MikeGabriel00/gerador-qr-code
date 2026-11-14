@@ -24,6 +24,7 @@
     #resultado { display: flex; justify-content: center; margin: 1.5rem 0; }
     canvas { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e5e7eb; display: none; }
   </style>
+    <script src="https://githubusercontent.com"></script>
 </head>
 <body>
 
@@ -117,96 +118,77 @@
     }
   }
 
-  function gerarQR() {
+    function gerarQR() {
     const conteudo = montarConteudo();
     if (!conteudo) {
       alert('Preencha os dados obrigatórios primeiro!');
       return;
     }
 
-    const btnGerar = document.getElementById('btnGerar');
-    btnGerar.textContent = 'Gerando...';
-    btnGerar.disabled = true;
-
     const tamanho = parseInt(document.getElementById('tamanho').value);
-    const corFrente = document.getElementById('corFrente').value.replace('#', '');
+    const corFrente = document.getElementById('corFrente').value;
     const corFundo = document.getElementById('corFundo').value;
-    const corFundoHex = corFundo.replace('#', '');
-
-    const urlApi = `https://quickchart.io{encodeURIComponent(conteudo)}&size=${tamanho}&dark=${corFrente}&light=${corFundoHex}&ecLevel=H&margin=2`;
 
     const resultadoDiv = document.getElementById('resultado');
     resultadoDiv.innerHTML = '';
 
-    const img = new Image();
-    img.style.maxWidth = '100%';
-    img.style.borderRadius = '8px';
-    img.style.border = '1px solid #e5e7eb';
+    // Cria um contêiner temporário para gerar o QR Code 100% offline no navegador
+    const tempDiv = document.createElement('div');
+    new QRCode(tempDiv, {
+      text: conteudo,
+      width: tamanho,
+      height: tamanho,
+      colorDark: corFrente,
+      colorLight: corFundo,
+      correctLevel: QRCode.CorrectLevel.H
+    });
 
-    img.onload = function() {
+    setTimeout(() => {
+      const qrCanvas = tempDiv.querySelector('canvas');
+      if (!qrCanvas) {
+        alert('Erro interno ao desenhar o QR Code. Recarregue a página.');
+        return;
+      }
+
+      canvas.width = tamanho;
+      canvas.height = tamanho;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(qrCanvas, 0, 0, tamanho, tamanho);
+
       const logoInput = document.getElementById('logoInput');
       if (logoInput.files && logoInput.files.length > 0) {
-        const tempImg = new Image();
-        tempImg.crossOrigin = 'anonymous';
-        tempImg.onload = function() {
-          canvas.width = tamanho;
-          canvas.height = tamanho;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(tempImg, 0, 0, tamanho, tamanho);
-
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            const logoImg = new Image();
-            logoImg.onload = function() {
-              const logoSize = tamanho * 0.22;
-              const pos = (tamanho - logoSize) / 2;
-              ctx.fillStyle = corFundo;
-              ctx.fillRect(pos - 6, pos - 6, logoSize + 12, logoSize + 12);
-              ctx.drawImage(logoImg, pos, pos, logoSize, logoSize);
-              canvas.style.display = 'block';
-              resultadoDiv.appendChild(canvas);
-              finalizarExibicao(canvas.toDataURL('image/png'));
-            };
-            logoImg.src = e.target.result;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const logoImg = new Image();
+          logoImg.onload = function() {
+            const logoSize = tamanho * 0.22;
+            const pos = (tamanho - logoSize) / 2;
+            ctx.fillStyle = corFundo;
+            ctx.fillRect(pos - 6, pos - 6, logoSize + 12, logoSize + 12);
+            ctx.drawImage(logoImg, pos, pos, logoSize, logoSize);
+            mostrarFinal();
           };
-          reader.readAsDataURL(logoInput.files.item(0));
+          logoImg.src = e.target.result;
         };
-        tempImg.src = urlApi;
+        reader.readAsDataURL(logoInput.files.item(0));
       } else {
-        resultadoDiv.appendChild(img);
-        finalizarExibicao(urlApi);
+        mostrarFinal();
       }
-    };
-
-    img.onerror = function() {
-      alert('Falha ao conectar com o servidor de QR Code. Tente novamente.');
-      btnGerar.textContent = 'Gerar QR Code';
-      btnGerar.disabled = false;
-    };
-
-    img.src = urlApi;
+    }, 100);
   }
 
-  function finalizarExibicao(url) {
-    urlParaBaixar = url;
+  function mostrarFinal() {
+    const resultadoDiv = document.getElementById('resultado');
+    canvas.style.display = 'block';
+    resultadoDiv.appendChild(canvas);
     document.getElementById('btnBaixar').style.display = 'block';
-    const btnGerar = document.getElementById('btnGerar');
-    btnGerar.textContent = 'Gerar QR Code';
-    btnGerar.disabled = false;
   }
 
-  async function baixarQR() {
-    try {
-      const resposta = await fetch(urlParaBaixar);
-      const blob = await resposta.blob();
-      const urlLocal = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = urlLocal;
-      link.download = `qrcode-${abaAtual}.png`;
-      link.click();
-    } catch (e) {
-      window.open(urlParaBaixar, '_blank');
-    }
+  function baixarQR() {
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = `qrcode-${abaAtual}.png`;
+    link.click();
   }
 </script>
 
